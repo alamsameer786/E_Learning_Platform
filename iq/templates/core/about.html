@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center mb-5">
+            <h1 class="display-4">About CampusIQ</h1>
+            <p class="lead">Revolutionizing Education with AI-Powered Learning Tools</p>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h3>Our Mission</h3>
+            <p class="lead">To empower students and educators with intelligent tools that transform learning materials into structured, exam-oriented resources.</p>
+            <p>CampusIQ leverages cutting-edge AI technology to simplify complex information, making education more accessible and effective for everyone.</p>
+        </div>
+        <div class="col-md-6">
+            <h3>Our Vision</h3>
+            <p class="lead">Creating a future where AI assists every learner in achieving academic excellence.</p>
+            <p>We believe in augmenting human intelligence with artificial intelligence to create smarter, more efficient learning experiences.</p>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h3 class="text-center mb-4">Key Features</h3>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-3">🤖</div>
+                    <h5 class="card-title">Automatic Note Summarization</h5>
+                    <p class="card-text">AI-powered summarization that condenses lengthy notes into concise, easy-to-understand summaries. Get the core ideas without reading everything.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-3">🎯</div>
+                    <h5 class="card-title">Key Point Extraction</h5>
+                    <p class="card-text">Intelligent extraction of important definitions, concepts, and highlights crucial for examinations and quick revision.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-3">❓</div>
+                    <h5 class="card-title">Important Question Generation</h5>
+                    <p class="card-text">AI-generated practice questions that reflect frequently tested concepts and critical areas of the syllabus.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-3">📊</div>
+                    <h5 class="card-title">Content Quality Analysis</h5>
+                    <p class="card-text">Detailed analysis of clarity, structure, and readability with actionable suggestions for improvement.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-3">📚</div>
+                    <h5 class="card-title">Study Plan Creator</h5>
+                    <p class="card-text">Create personalized study plans to organize your learning materials and track your progress.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-3">📈</div>
+                    <h5 class="card-title">Learning Analytics</h5>
+                    <p class="card-text">Track your progress with detailed analytics and insights into your learning patterns.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <h4 class="alert-heading">💡 How It Works</h4>
+                <p>Our AI system acts purely as a supportive learning aid. It enhances your learning experience by:</p>
+                <ul>
+                    <li>Processing uploaded academic notes to generate intelligent summaries</li>
+                    <li>Extracting key concepts and definitions for quick revision</li>
+                    <li>Creating practice questions based on your content</li>
+                    <li>Analyzing content structure and providing improvement suggestions</li>
+                </ul>
+                <hr>
+                <p class="mb-0">⚠️ <strong>Note:</strong> The AI system does not replace faculty guidance or academic teaching and does not perform student evaluation or grading.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">For Students</h5>
+                    <ul>
+                        <li>Quickly understand core concepts</li>
+                        <li>Prepare for exams with practice questions</li>
+                        <li>Review key points efficiently</li>
+                        <li>Track your learning progress</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">For Contributors</h5>
+                    <ul>
+                        <li>Analyze content clarity and structure</li>
+                        <li>Create better-organized academic materials</li>
+                        <li>Receive AI-powered suggestions for improvement</li>
+                        <li>Share high-quality learning resources</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>Ready to Transform Your Learning?</h3>
+            <p class="lead">Join thousands of students using CampusIQ for smarter, more efficient studying.</p>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Get Started Free</a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

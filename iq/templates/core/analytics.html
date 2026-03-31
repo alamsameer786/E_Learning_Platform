@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Learning Analytics</h2>
+            <p>Track your progress and content quality</p>
+            <hr>
+        </div>
+    </div>
+    
+    {% if analytics %}
+        <div class="row">
+            {% for item in analytics %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ item.title }}</h5>
+                            <small class="text-muted">{{ item.date|date:"M d, Y" }}</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label>Clarity Score: {{ item.clarity|floatformat:0 }}%</label>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: {{ item.clarity|floatformat:0 }}%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Structure Score: {{ item.structure|floatformat:0 }}%</label>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" style="width: {{ item.structure|floatformat:0 }}%"></div>
+                                </div>
+                            </div>
+                            <p><strong>Word Count:</strong> {{ item.words }} words</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No analytics data available. Upload and process notes to see analytics.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

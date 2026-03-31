@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Quick Revision</h2>
+            <p>Key points from all your notes for fast review</p>
+            <hr>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% if key_points %}
+            {% for item in key_points %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">{{ item.note_title }}</h5>
+                        </div>
+                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                            {{ item.key_points|linebreaks }}
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'view_note' item.note_id %}" class="btn btn-sm btn-primary">View Full Note</a>
+                            <a href="{% url 'generate_questions' item.note_id %}" class="btn btn-sm btn-success">Practice Questions</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-md-12">
+                <div class="alert alert-warning">
+                    <h5>No Key Points Found</h5>
+                    <p>You haven't uploaded any notes yet, or the notes haven't been processed. <a href="{% url 'upload_note' %}">Upload a note</a> to get started.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    {% if key_points %}
+        <div class="row mt-4">
+            <div class="col-md-12 text-center">
+                <div class="alert alert-success">
+                    <strong>Revision Tips:</strong> Review these key points daily. Try to explain each concept in your own words.
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

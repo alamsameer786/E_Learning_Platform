@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Study Plans</h2>
+            <p>Organize your learning and track your progress</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPlanModal">
+                + Create Study Plan
+            </button>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% if plans %}
+            {% for plan in plans %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ plan.title }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ plan.description }}</p>
+                            {% if plan.target_date %}
+                                <p><strong>Target Date:</strong> {{ plan.target_date }}</p>
+                            {% endif %}
+                            
+                            {% with note_count=plan.notes.count %}
+                                {% if note_count > 0 %}
+                                    <div class="progress mb-3">
+                                        {% widthratio note_count 10 100 as progress_percent %}
+                                        <div class="progress-bar" style="width: {{ progress_percent }}%"></div>
+                                    </div>
+                                    <p><strong>Notes included:</strong> {{ note_count }}</p>
+                                {% else %}
+                                    <p><strong>Notes included:</strong> 0</p>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="btn btn-sm btn-info">View Details</a>
+                            <a href="#" class="btn btn-sm btn-success">Mark Progress</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    No study plans yet. Create your first study plan to organize your learning!
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Create Plan Modal -->
+<div class="modal fade" id="createPlanModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Study Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Plan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>User Profile</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email|default:"Not provided" }}</p>
+                    <p><strong>Date Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+                    <p><strong>Last Login:</strong> {{ user.last_login|date:"M d, Y H:i" }}</p>
+                    <hr>
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>{{ note.title }}</h2>
+            {% if note.subject %}
+                <span class="badge bg-info">{{ note.subject }}</span>
+            {% endif %}
+            {% if note.topic %}
+                <span class="badge bg-secondary">{{ note.topic }}</span>
+            {% endif %}
+            <hr>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Original Content</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ note.content|linebreaks }}</p>
+                    {% if note.file %}
+                        <a href="{{ note.file.url }}" class="btn btn-info">Download File</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            {% if summary %}
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5>AI Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Quick Summary:</strong></p>
+                    <p>{{ summary.summary_text }}</p>
+                    
+                    {% if summary.one_line_summary %}
+                        <p><strong>One Line Summary:</strong></p>
+                        <p class="text-muted">{{ summary.one_line_summary }}</p>
+                    {% endif %}
+                    
+                    {% if summary.key_points %}
+                        <hr>
+                        <p><strong>Key Points:</strong></p>
+                        {{ summary.key_points|linebreaks }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if analysis %}
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5>Content Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Clarity Score:</strong> {{ analysis.clarity_score|floatformat:0 }}/100</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" style="width: {{ analysis.clarity_score|floatformat:0 }}%"></div>
+                    </div>
+                    
+                    <p><strong>Structure Score:</strong> {{ analysis.structure_score|floatformat:0 }}/100</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-info" style="width: {{ analysis.structure_score|floatformat:0 }}%"></div>
+                    </div>
+                    
+                    <p><strong>Readability:</strong> {{ analysis.complexity_level }}</p>
+                    <p><strong>Word Count:</strong> {{ analysis.word_count }} words</p>
+                    
+                    <hr>
+                    <p><strong>Feedback:</strong></p>
+                    <p>{{ analysis.feedback }}</p>
+                    
+                    {% if analysis.suggestions %}
+                        <p><strong>Suggestions:</strong></p>
+                        <p>{{ analysis.suggestions }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if questions %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5>Practice Questions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for question in questions %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p><strong>Q{{ forloop.counter }}:</strong> {{ question.question_text }}</p>
+                                    <span class="badge {% if question.difficulty == 'easy' %}bg-success{% elif question.difficulty == 'medium' %}bg-warning{% else %}bg-danger{% endif %} mb-2">
+                                        {{ question.get_difficulty_display }}
+                                    </span>
+                                    {% if question.answer_hint %}
+                                        <button class="btn btn-sm btn-outline-info ms-2" onclick="alert('{{ question.answer_hint|escapejs }}')">
+                                            Show Hint
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'generate_questions' note.id %}" class="btn btn-primary">
+                            Take Practice Quiz
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
