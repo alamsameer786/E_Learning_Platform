@@ -83,3 +83,4 @@ class UserProgress(models.Model):
     
     class Meta:
         unique_together = ['user', 'question']
+        
