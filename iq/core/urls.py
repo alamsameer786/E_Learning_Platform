@@ -24,6 +24,11 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),  # Add this line
     # Make sure this line exists in your urls.py
     path('note/<int:note_id>/questions/', views.get_note_questions, name='get_note_questions'),
+    path('note/<int:note_id>/generate-questions/', views.generate_questions, name='generate_questions'),
+    path('notes/', views.note_list, name='note_list'),
+    path('note/<int:note_id>/', views.note_detail, name='note_detail'),
+    path('note/<int:note_id>/full/', views.get_full_note, name='get_full_note'),
+    path('note/<int:note_id>/generate-questions/', views.generate_questions, name='generate_questions'),
 ]
 
 if settings.DEBUG:

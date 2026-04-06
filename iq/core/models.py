@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
+# ==================== USER PROFILE ====================
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -13,6 +14,8 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s profile"
 
+
+# ==================== ACADEMIC NOTE (Original) ====================
 class AcademicNote(models.Model):
     NOTE_TYPES = [
         ('lecture', 'Lecture Notes'),
@@ -23,7 +26,7 @@ class AcademicNote(models.Model):
     
     title = models.CharField(max_length=200)
     content = models.TextField()
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notes')
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='academic_notes')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     file = models.FileField(upload_to='notes/', blank=True, null=True)
@@ -38,6 +41,24 @@ class AcademicNote(models.Model):
     class Meta:
         ordering = ['-uploaded_at']
 
+
+# ==================== NOTE (User's Personal Note) ====================
+class Note(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='personal_notes')
+    title = models.CharField(max_length=255)
+    content = models.TextField()  # Full note content
+    summary = models.TextField(blank=True, null=True)  # Optional summary
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.title
+
+
+# ==================== NOTE SUMMARY ====================
 class NoteSummary(models.Model):
     note = models.OneToOneField(AcademicNote, on_delete=models.CASCADE, related_name='summary')
     summary_text = models.TextField()
@@ -49,6 +70,8 @@ class NoteSummary(models.Model):
     def __str__(self):
         return f"Summary for {self.note.title}"
 
+
+# ==================== IMPORTANT QUESTIONS ====================
 class ImportantQuestion(models.Model):
     DIFFICULTY_CHOICES = [
         ('easy', 'Easy'),
@@ -67,6 +90,8 @@ class ImportantQuestion(models.Model):
     def __str__(self):
         return self.question_text[:50]
 
+
+# ==================== CONTENT ANALYSIS ====================
 class ContentAnalysis(models.Model):
     note = models.OneToOneField(AcademicNote, on_delete=models.CASCADE, related_name='analysis')
     clarity_score = models.FloatField(default=0.0)
@@ -82,6 +107,8 @@ class ContentAnalysis(models.Model):
     def __str__(self):
         return f"Analysis for {self.note.title}"
 
+
+# ==================== STUDY PLAN ====================
 class StudyPlan(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='study_plans')
     title = models.CharField(max_length=200)
@@ -95,25 +122,37 @@ class StudyPlan(models.Model):
     def __str__(self):
         return self.title
 
+
+# ==================== USER PROGRESS ====================
 class UserProgress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='progress')
-    question = models.ForeignKey(ImportantQuestion, on_delete=models.CASCADE, related_name='progress')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='question_progress')
+    question = models.ForeignKey(ImportantQuestion, on_delete=models.CASCADE, related_name='user_progress')
     attempted = models.BooleanField(default=False)
     correct = models.BooleanField(default=False)
     attempted_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         unique_together = ['user', 'question']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.question.question_text[:30]}"
 
+
+# ==================== DSA TOPICS ====================
 class DSATopic(models.Model):
     name = models.CharField(max_length=100)
     video_url = models.URLField()
     description = models.TextField(blank=True)
     order = models.IntegerField(default=0)
     
+    class Meta:
+        ordering = ['order']
+    
     def __str__(self):
         return self.name
 
+
+# ==================== USER DSA PROGRESS ====================
 class UserDSATopicProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dsa_progress')
     topic = models.ForeignKey(DSATopic, on_delete=models.CASCADE)
@@ -123,15 +162,23 @@ class UserDSATopicProgress(models.Model):
     
     class Meta:
         unique_together = ['user', 'topic']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.topic.name}: {'Completed' if self.completed else 'In Progress'}"
 
-# Signal to create UserProfile automatically
+
+# ==================== SIGNALS ====================
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
+    """Create UserProfile when a new User is created"""
     if created:
         UserProfile.objects.get_or_create(user=instance)
 
+
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
+    """Save UserProfile when User is saved"""
     if not hasattr(instance, 'profile'):
         UserProfile.objects.create(user=instance)
-    instance.profile.save()
+    else:
+        instance.profile.save()

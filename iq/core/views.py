@@ -5,19 +5,23 @@ from django.http import JsonResponse, HttpResponse
 from django.db.models import Count, Avg
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
-from .models import AcademicNote, NoteSummary, ImportantQuestion, ContentAnalysis, StudyPlan, UserProgress, UserProfile, DSATopic, UserDSATopicProgress
+from django.views.decorators.http import require_http_methods
+from .models import AcademicNote, NoteSummary, ImportantQuestion, ContentAnalysis, StudyPlan, UserProgress, UserProfile, DSATopic, UserDSATopicProgress, Note
 from .ai_utils import generate_summary, generate_questions, analyze_content
 from datetime import datetime, timedelta
 import json
 import os
 
+
 def home(request):
     """Home page view - Landing page"""
     return render(request, 'core/home.html')
 
+
 def about(request):
     """About page view - Team information"""
     return render(request, 'core/about.html')
+
 
 @login_required
 def dashboard(request):
@@ -95,6 +99,7 @@ def dashboard(request):
         }
         return render(request, 'core/dashboard.html', context)
 
+
 def get_user_progress(user):
     """Get user progress data for charts"""
     progress_data = []
@@ -110,11 +115,15 @@ def get_user_progress(user):
             'completed': completed
         })
     return progress_data
+
+
 def logout_view(request):
     """Logout user"""
     from django.contrib.auth import logout
     logout(request)
     return redirect('home')
+
+
 @login_required
 def upload_note(request):
     """Upload and process academic notes with AI - Fixed for file extraction"""
@@ -293,96 +302,28 @@ The AI has analyzed your content and it's ready for effective learning!
     return summary
 
 
-# Also add this improved version of generate_summary to your ai_utils.py
-def generate_summary(note):
-    """Generate comprehensive AI summary (6-7 lines) - Improved version"""
-    content = note.content
-    
-    # Clean the content - remove any binary artifacts
-    if content.startswith('PK') or 'PK\x03\x04' in content:
-        content = f"This note contains educational content about {note.topic or note.subject}. The material has been uploaded for learning purposes."
-    
-    # Split into sentences
-    sentences = [s.strip() for s in content.replace('\n', ' ').split('.') if len(s.strip()) > 20]
-    
-    if len(sentences) < 2:
-        # Create a meaningful summary from the content
-        words = content.split()
-        if len(words) > 20:
-            preview = ' '.join(words[:30])
-            summary_text = f"This educational material covers important concepts in {note.subject or 'the subject'}. Key points include: {preview}..."
-        else:
-            summary_text = f"This note contains valuable information about {note.topic or note.subject or 'the topic'}. The material is designed to help you understand key concepts and prepare for assessments."
-    else:
-        # Generate 6-7 line summary from sentences
-        summary_lines = []
-        
-        # Add title context
-        summary_lines.append(f"This note '{note.title}' covers important concepts in {note.subject or 'the subject area'}.")
-        
-        # Add main points from content
-        for i, sent in enumerate(sentences[:5]):
-            if len(sent) > 30:
-                summary_lines.append(sent[:150])
-        
-        # Ensure we have 6-7 lines
-        while len(summary_lines) < 6:
-            summary_lines.append("The material provides comprehensive coverage of key topics and concepts.")
-        
-        summary_text = '. '.join(summary_lines[:7]) + '.'
-    
-    # Generate bullet points
-    bullet_points = []
-    for i, sent in enumerate(sentences[:5]):
-        if len(sent) > 20:
-            bullet_points.append(f"• {sent[:100]}..." if len(sent) > 100 else f"• {sent}")
-    
-    if not bullet_points:
-        bullet_points = [
-            f"• Key concepts from {note.subject or 'the subject'}",
-            "• Important definitions and explanations",
-            "• Practical applications and examples",
-            "• Review questions for self-assessment"
-        ]
-    
-    # One line summary
-    one_line = f"Summary of '{note.title}': {sentences[0][:100]}..." if sentences else f"Educational content about {note.subject or 'various topics'}."
-    
-    # Extract key points
-    key_points_list = []
-    for sent in sentences[:6]:
-        if len(sent) > 20:
-            key_points_list.append(f"• {sent[:100]}..." if len(sent) > 100 else f"• {sent}")
-    
-    key_points = '\n'.join(key_points_list) if key_points_list else "• Key concepts are being processed and will appear shortly."
-    
-    NoteSummary.objects.update_or_create(
-        note=note,
-        defaults={
-            'summary_text': summary_text,
-            'key_points': key_points,
-            'bullet_points': '\n'.join(bullet_points),
-            'one_line_summary': one_line
-        }
-    )
-    
-    return summary_text
-
 @login_required
 def view_note(request, note_id):
     """View individual note with AI-generated content"""
     note = get_object_or_404(AcademicNote, id=note_id, uploaded_by=request.user)
+    
+    # Calculate stats in Python (no filters needed)
+    content = note.content
+    word_count = len(content.split())
+    char_count = len(content)
+    reading_time = round(word_count / 200) if word_count > 0 else 1
     
     context = {
         'note': note,
         'summary': getattr(note, 'summary', None),
         'questions': note.questions.all(),
         'analysis': getattr(note, 'analysis', None),
+        'word_count': word_count,
+        'char_count': char_count,
+        'reading_time': reading_time,
     }
     return render(request, 'core/view_note.html', context)
-def about(request):
-    """About page view"""
-    return render(request, 'core/about.html')
+
 
 @login_required
 def reset_password_demo(request):
@@ -400,6 +341,8 @@ def reset_password_demo(request):
             return JsonResponse({'status': 'error', 'message': 'User not found!'}, status=400)
     
     return JsonResponse({'status': 'error'}, status=400)
+
+
 @login_required
 def download_note(request, note_id):
     """Download note as text file"""
@@ -407,6 +350,7 @@ def download_note(request, note_id):
     response = HttpResponse(note.content, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename="{note.title}.txt"'
     return response
+
 
 @login_required
 def preview_note(request, note_id):
@@ -421,6 +365,7 @@ def preview_note(request, note_id):
         'note_type': note.note_type,
         'uploaded_at': note.uploaded_at.strftime('%Y-%m-%d %H:%M')
     })
+
 
 @login_required
 def get_note_summary(request, note_id):
@@ -456,6 +401,7 @@ def get_note_summary(request, note_id):
     
     return JsonResponse(data)
 
+
 @login_required
 def generate_note_questions(request):
     """Generate questions for a specific note via AJAX"""
@@ -482,6 +428,7 @@ def generate_note_questions(request):
     
     return JsonResponse({'status': 'error'}, status=400)
 
+
 @login_required
 def submit_answer(request):
     """Submit answer for a question and track progress"""
@@ -507,12 +454,14 @@ def submit_answer(request):
     
     return JsonResponse({'status': 'error'}, status=400)
 
+
 @login_required
 def notes_summary(request):
     """Display AI-generated summaries for all notes"""
     notes = AcademicNote.objects.filter(uploaded_by=request.user)
     context = {'notes': notes}
     return render(request, 'core/notes_summary.html', context)
+
 
 @login_required
 def quick_revision(request):
@@ -540,6 +489,99 @@ def quick_revision(request):
         'total_notes': notes.count(),
     }
     return render(request, 'core/quick_revision.html', context)
+
+
+# ==================== PERSONAL NOTES VIEWS ====================
+
+@login_required
+def note_detail(request, note_id):
+    """Display full note content"""
+    note = get_object_or_404(Note, id=note_id, user=request.user)
+    
+    # Calculate reading time in Python
+    word_count = len(note.content.split())
+    reading_time = round(word_count / 200) if word_count > 0 else 1
+    
+    context = {
+        'note': note,
+        'full_content': note.content,
+        'word_count': word_count,
+        'reading_time': reading_time,
+    }
+    return render(request, 'note_detail.html', context)
+
+
+@login_required
+def get_full_note(request, note_id):
+    """API endpoint to get full note content via AJAX"""
+    note = get_object_or_404(Note, id=note_id)
+    
+    if note.user != request.user:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    return JsonResponse({
+        'success': True,
+        'title': note.title,
+        'content': note.content,
+        'created_at': note.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+        'updated_at': note.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+    })
+
+
+@login_required
+def note_list(request):
+    """List all notes for the current user"""
+    notes = Note.objects.filter(user=request.user).order_by('-created_at')
+    
+    context = {
+        'notes': notes,
+    }
+    return render(request, 'note_list.html', context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def generate_note_questions_api(request, note_id):
+    """Generate questions based on note content"""
+    try:
+        note = get_object_or_404(Note, id=note_id)
+        
+        if note.user != request.user:
+            return JsonResponse({'error': 'Unauthorized'}, status=403)
+        
+        # Simple question generation based on content
+        sentences = note.content.split('.')
+        questions = []
+        
+        for i, sentence in enumerate(sentences[:5]):  # Limit to 5 questions
+            if len(sentence.strip()) > 20:
+                questions.append({
+                    'id': i + 1,
+                    'text': f"What does '{sentence[:50]}...' imply?",
+                    'type': 'short'
+                })
+        
+        if not questions:
+            questions = [
+                {'id': 1, 'text': 'What is the main topic of this note?', 'type': 'essay'},
+                {'id': 2, 'text': 'List the key points discussed.', 'type': 'list'},
+                {'id': 3, 'text': 'What actions should be taken based on this note?', 'type': 'short'},
+            ]
+        
+        return JsonResponse({
+            'success': True,
+            'questions': questions,
+            'note_title': note.title
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+# ==================== STUDY PLANS VIEWS ====================
 
 @login_required
 def study_plans(request):
@@ -574,6 +616,7 @@ def study_plans(request):
     
     return JsonResponse({'plans': plans_data})
 
+
 @login_required
 def update_study_plan_progress(request):
     """Update study plan progress"""
@@ -590,6 +633,9 @@ def update_study_plan_progress(request):
         return JsonResponse({'status': 'success'})
     
     return JsonResponse({'status': 'error'}, status=400)
+
+
+# ==================== USER PROFILE VIEWS ====================
 
 @login_required
 def get_user_stats(request):
@@ -612,6 +658,7 @@ def get_user_stats(request):
         'dsa_total': dsa_total
     }
     return JsonResponse(data)
+
 
 @login_required
 def edit_profile(request):
@@ -649,6 +696,7 @@ def edit_profile(request):
     
     return JsonResponse({'status': 'error'}, status=400)
 
+
 @login_required
 def forgot_password(request):
     """Handle forgot password request"""
@@ -662,6 +710,7 @@ def forgot_password(request):
         except User.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'No user found with this email!'}, status=400)
     return JsonResponse({'status': 'error'}, status=400)
+
 
 @login_required
 def reset_password(request):
@@ -679,6 +728,9 @@ def reset_password(request):
             return JsonResponse({'status': 'error', 'message': 'User not found!'}, status=400)
     return JsonResponse({'status': 'error'}, status=400)
 
+
+# ==================== DSA VIEWS ====================
+
 @login_required
 def get_video_tutorial(request):
     """Get video tutorial for DSA topic"""
@@ -695,6 +747,7 @@ def get_video_tutorial(request):
     }
     
     return JsonResponse({'video_url': video_urls.get(topic, video_urls['arrays'])})
+
 
 @login_required
 def mark_dsa_topic_complete(request):
@@ -716,6 +769,9 @@ def mark_dsa_topic_complete(request):
     
     return JsonResponse({'status': 'error'}, status=400)
 
+
+# ==================== NOTE MANAGEMENT VIEWS ====================
+
 @login_required
 def delete_note(request, note_id):
     """Delete a note"""
@@ -726,7 +782,8 @@ def delete_note(request, note_id):
         return JsonResponse({'status': 'success', 'message': f'Note "{note_title}" deleted successfully!'})
     
     return JsonResponse({'status': 'error'}, status=400)
-# Add this function to your existing views.py - it's missing
+
+
 @login_required
 def get_note_questions(request, note_id):
     """Get questions for a specific note via AJAX"""
@@ -752,6 +809,8 @@ def get_note_questions(request, note_id):
     
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
+
+
 @login_required
 def regenerate_ai_content(request, note_id):
     """Regenerate AI content for a note"""

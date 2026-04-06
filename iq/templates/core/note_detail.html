@@ -1,0 +1,242 @@
+{% load note_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ note.title }} | View Note - SynapsePM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .note-content { line-height: 1.8; font-size: 1rem; color: #1e293b; }
+        .note-content p { margin-bottom: 1.25rem; }
+        .prose { max-width: 100%; }
+        .prose h1 { font-size: 1.875rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; }
+        .prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.75rem; }
+        .prose h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .prose ul, .prose ol { margin: 1rem 0 1rem 1.5rem; }
+        .prose li { margin-bottom: 0.25rem; }
+        .prose blockquote { border-left: 4px solid #00b4aa; padding-left: 1rem; font-style: italic; margin: 1rem 0; }
+        .prose code { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 0.375rem; font-family: monospace; }
+        .prose pre { background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .animate-spin { animation: spin 1s linear infinite; }
+        .tab-btn { transition: all 0.2s ease; }
+        .tab-btn.active { background-color: #00b4aa; color: white; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-card { transition: all 0.2s ease; }
+        .question-card:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+<!-- Navigation -->
+<nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-2xl text-teal-600">description</span>
+                <span class="text-xl font-bold text-slate-800">Synapse<span class="text-teal-600">PM</span></span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="{% url 'dashboard' %}" class="text-slate-600 hover:text-teal-600 transition flex items-center gap-1">
+                    <span class="material-symbols-outlined text-base">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="{% url 'notes_summary' %}" class="text-slate-600 hover:text-teal-600 transition flex items-center gap-1">
+                    <span class="material-symbols-outlined text-base">summarize</span>
+                    All Notes
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <!-- Note Header -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+        <div class="p-6 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+            <div class="flex flex-wrap justify-between items-start gap-4">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">
+                            {{ note.get_note_type_display }}
+                        </span>
+                        {% if note.subject %}
+                        <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full font-medium">
+                            📚 {{ note.subject }}
+                        </span>
+                        {% endif %}
+                        {% if note.semester %}
+                        <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full font-medium">
+                            📖 Semester {{ note.semester }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2 break-words">{{ note.title }}</h1>
+                    <div class="flex flex-wrap gap-4 text-sm text-slate-500">
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base">person</span>
+                            Uploaded by: {{ note.uploaded_by.username }}
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base">calendar_today</span>
+                            {{ note.uploaded_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="downloadNote()" class="px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg transition flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">download</span>
+                        Download
+                    </button>
+                    <button onclick="regenerateAI()" class="px-4 py-2 text-sm bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">auto_awesome</span>
+                        Regenerate AI
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="border-b border-slate-200 px-6">
+            <div class="flex gap-2">
+                <button class="tab-btn active px-4 py-3 text-sm font-medium text-slate-600 hover:text-teal-600 transition" data-tab="content">
+                    <span class="material-symbols-outlined text-base align-middle mr-1">description</span>
+                    Content
+                </button>
+                <button class="tab-btn px-4 py-3 text-sm font-medium text-slate-600 hover:text-teal-600 transition" data-tab="summary">
+                    <span class="material-symbols-outlined text-base align-middle mr-1">summarize</span>
+                    AI Summary
+                </button>
+                <button class="tab-btn px-4 py-3 text-sm font-medium text-slate-600 hover:text-teal-600 transition" data-tab="questions">
+                    <span class="material-symbols-outlined text-base align-middle mr-1">quiz</span>
+                    Practice Questions
+                </button>
+                <button class="tab-btn px-4 py-3 text-sm font-medium text-slate-600 hover:text-teal-600 transition" data-tab="analysis">
+                    <span class="material-symbols-outlined text-base align-middle mr-1">insights</span>
+                    Analysis
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="p-6">
+            <!-- Content Tab -->
+            <div id="content-tab" class="tab-pane active">
+                <div class="note-content prose max-w-none">
+                    {{ note.content|linebreaks|safe }}
+                </div>
+                
+                <!-- Note Stats - USING THE divide FILTER HERE -->
+                <div class="mt-8 pt-6 border-t border-slate-100">
+                    <div class="flex flex-wrap gap-6 text-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base text-slate-400">text_fields</span>
+                            <span class="text-slate-400">Word Count:</span>
+                            <span class="font-semibold text-slate-700">{{ note.content|wordcount }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base text-slate-400">abc</span>
+                            <span class="text-slate-400">Character Count:</span>
+                            <span class="font-semibold text-slate-700">{{ note.content|length }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base text-slate-400">schedule</span>
+                            <span class="text-slate-400">Reading Time:</span>
+                            <span class="font-semibold text-slate-700">{{ note.content|wordcount|divide:200 }} min read</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Summary Tab -->
+            <div id="summary-tab" class="tab-pane">
+                {% if summary %}
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-teal-50 to-white rounded-xl p-6 border border-teal-100">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">🤖 AI Summary</h3>
+                        <p class="text-slate-700 leading-relaxed">{{ summary.summary_text }}</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">💡 One Line Summary</h3>
+                        <p class="text-slate-600 italic">{{ summary.one_line_summary }}</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">📌 Key Points</h3>
+                        <div class="prose prose-sm max-w-none">{{ summary.key_points|linebreaks|safe }}</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <p class="text-slate-400">AI summary is being generated. Please refresh.</p>
+                    <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-teal-600 text-white rounded-lg">Refresh</button>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Questions Tab -->
+            <div id="questions-tab" class="tab-pane">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-slate-800">📝 Practice Questions</h3>
+                    <button onclick="generateQuestions()" class="px-3 py-1 text-sm bg-teal-600 text-white rounded-lg">Generate Questions</button>
+                </div>
+                <div id="questionsContainer">
+                    {% if questions %}
+                    <div class="space-y-4">
+                        {% for q in questions %}
+                        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                            <p class="font-medium text-slate-800 mb-2">{{ q.question_text }}</p>
+                            <button onclick="toggleAnswer({{ q.id }})" class="text-sm text-teal-600 hover:underline">Show Hint</button>
+                            <div id="answer-{{ q.id }}" class="hidden mt-3 p-3 bg-white rounded-lg">
+                                <p class="text-sm text-slate-600">💡 {{ q.answer_hint|default:"Review your notes for the answer." }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-slate-400 text-center py-8">Click "Generate Questions" to create practice questions.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Analysis Tab -->
+            <div id="analysis-tab" class="tab-pane">
+                {% if analysis %}
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="text-center p-4 bg-teal-50 rounded-lg"><div class="text-2xl font-bold text-teal-600">{{ analysis.clarity_score }}%</div><div class="text-sm">Clarity</div></div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg"><div class="text-2xl font-bold text-blue-600">{{ analysis.structure_score }}%</div><div class="text-sm">Structure</div></div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg"><div class="text-2xl font-bold text-purple-600">{{ analysis.readability_score }}%</div><div class="text-sm">Readability</div></div>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-6"><p class="text-slate-700">{{ analysis.feedback }}</p></div>
+                {% else %}
+                <p class="text-slate-400 text-center py-8">Analysis is being generated.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+function toggleAnswer(id) { document.getElementById(`answer-${id}`).classList.toggle('hidden'); }
+function downloadNote() { alert('Download feature - implement as needed'); }
+function regenerateAI() { if(confirm('Regenerate AI content?')) location.reload(); }
+function generateQuestions() { alert('Generating questions...'); location.reload(); }
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>
