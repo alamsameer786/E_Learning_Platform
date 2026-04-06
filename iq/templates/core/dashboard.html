@@ -2,214 +2,343 @@
 
 {% block content %}
 <style>
-    .dashboard-header {
-        background: linear-gradient(135deg, #4e73df, #1cc88a);
-        color: white;
-        padding: 25px;
-        border-radius: 12px;
-    }
-
     .stat-card {
-        border: none;
-        border-radius: 12px;
-        color: white;
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
         transition: 0.3s;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        cursor: pointer;
+        border-left: 4px solid;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
     }
-
+    
     .stat-card:hover {
         transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
-
-    .icon-circle {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.2);
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 5px;
     }
-
-    .card-modern {
-        border: none;
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .progress-bar-custom {
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: width 0.3s;
+    }
+    
+    .note-card {
+        background: white;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-
-    .btn-soft {
-        border-radius: 10px;
-        padding: 10px;
-        font-weight: 500;
-    }
-
-    .note-card:hover {
-        transform: translateY(-4px);
+        padding: 20px;
+        margin-bottom: 20px;
         transition: 0.3s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .note-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-sm-custom {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin: 2px;
     }
 </style>
 
-<div class="container mt-4">
-
-    <!-- Header -->
-    <div class="dashboard-header mb-4">
-        <h3 class="mb-1">Welcome back, {{ user.username }} 👋</h3>
-        <small>Your AI-powered learning assistant</small>
+<div class="container-fluid">
+    <!-- Welcome Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-2">Welcome back, {{ user.username }}! 👋</h2>
+            <p class="text-muted">Here's your AI-powered learning dashboard</p>
+            <hr>
+        </div>
     </div>
-
-    <!-- Stats -->
+    
+    <!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
-            <div class="stat-card p-3" style="background: #4e73df;">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <small>Total Notes</small>
-                        <h3>{{ total_notes }}</h3>
-                    </div>
-                    <div class="icon-circle"><i class="fas fa-book"></i></div>
+            <div class="stat-card" style="border-left-color: #4e73df;">
+                <div class="stat-number">{{ total_notes }}</div>
+                <div class="stat-label">📚 Total Notes Uploaded</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card" style="border-left-color: #1cc88a;">
+                <div class="stat-number">{{ total_questions }}</div>
+                <div class="stat-label">❓ AI Generated Questions</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card" style="border-left-color: #36b9cc;">
+                <div class="stat-number">{{ avg_clarity|floatformat:0 }}%</div>
+                <div class="stat-label">📊 Average Clarity Score</div>
+                <div class="progress-bar-custom">
+                    <div class="progress-fill" style="width: {{ avg_clarity|floatformat:0 }}%"></div>
                 </div>
             </div>
         </div>
-
         <div class="col-md-3 mb-3">
-            <div class="stat-card p-3" style="background: #1cc88a;">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <small>Practice Questions</small>
-                        <h3>{{ total_questions }}</h3>
-                    </div>
-                    <div class="icon-circle"><i class="fas fa-question"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="stat-card p-3" style="background: #36b9cc;">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <small>Clarity Score</small>
-                        <h3>{{ avg_clarity|floatformat:0 }}%</h3>
-                    </div>
-                    <div class="icon-circle"><i class="fas fa-chart-line"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="stat-card p-3" style="background: #f6c23e;">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <small>Study Plans</small>
-                        <h3>{{ study_plans|length }}</h3>
-                    </div>
-                    <div class="icon-circle"><i class="fas fa-calendar"></i></div>
-                </div>
+            <div class="stat-card" style="border-left-color: #f6c23e;">
+                <div class="stat-number">{{ accuracy }}%</div>
+                <div class="stat-label">🎯 Overall Quiz Accuracy</div>
             </div>
         </div>
     </div>
-
-    <!-- Actions + Activity -->
+    
+    <!-- Progress and Stats Row -->
     <div class="row mb-4">
         <div class="col-md-8">
-            <div class="card-modern p-3">
-                <h5 class="mb-3">Quick Actions</h5>
-
-                <div class="row">
-                    <div class="col-md-4 mb-2">
-                        <a href="{% url 'upload_note' %}" class="btn btn-success btn-soft w-100">
-                            📝 Upload
-                        </a>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <a href="{% url 'quick_revision' %}" class="btn btn-info btn-soft w-100">
-                            ⚡ Revise
-                        </a>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <a href="{% url 'study_plans' %}" class="btn btn-primary btn-soft w-100">
-                            📚 Plans
-                        </a>
-                    </div>
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">📈 Weekly Learning Progress</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="progressChart" height="200"></canvas>
                 </div>
             </div>
         </div>
-
         <div class="col-md-4">
-            <div class="card-modern p-3">
-                <h5>Recent Activity</h5>
-
-                {% if recent_notes %}
-                    {% for note in recent_notes %}
-                        <div class="mb-2">
-                            <a href="{% url 'view_note' note.id %}" class="fw-semibold">
-                                {{ note.title }}
-                            </a>
-                            <small class="text-muted d-block">
-                                {{ note.uploaded_at|timesince }} ago
-                            </small>
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">📊 Learning Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Questions Attempted</small>
+                        <h4 class="mb-0">{{ questions_attempted }}</h4>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Correct Answers</small>
+                        <h4 class="mb-0 text-success">{{ questions_correct }}</h4>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">DSA Progress</small>
+                        <h4 class="mb-0">{{ dsa_progress }}%</h4>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" style="width: {{ dsa_progress }}%"></div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-muted">No activity yet</p>
-                {% endif %}
+                    </div>
+                    <div>
+                        <small class="text-muted">Study Plans</small>
+                        <h4 class="mb-0">{{ study_plans|length }}</h4>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Features -->
-    <div class="card-modern p-3 mb-4">
-        <h5 class="mb-3">AI Features</h5>
-        <div class="row text-center">
-            <div class="col-md-3">📝 <br><small>Summarization</small></div>
-            <div class="col-md-3">⭐ <br><small>Key Points</small></div>
-            <div class="col-md-3">❓ <br><small>Questions</small></div>
-            <div class="col-md-3">📊 <br><small>Analysis</small></div>
+    
+    <!-- Recent Notes with Download Option -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3">📝 Recent Notes</h4>
         </div>
-    </div>
-
-    <!-- Notes -->
-    <h4 class="mb-3">My Notes</h4>
-    <div class="row">
-        {% for note in notes %}
-        <div class="col-md-6 mb-4">
-            <div class="card-modern p-3 note-card h-100">
-                <h5>{{ note.title }}</h5>
-
-                {% if note.subject %}
-                    <span class="badge bg-info">{{ note.subject }}</span>
-                {% endif %}
-
-                <p class="text-muted mt-2">
-                    {{ note.uploaded_at|date:"M d, Y" }}
-                </p>
-
-                <div class="mt-2">
-                    <a href="{% url 'view_note' note.id %}" class="btn btn-sm btn-primary">View</a>
-                    <a href="{% url 'generate_questions' note.id %}" class="btn btn-sm btn-success">Practice</a>
+        {% for note in recent_notes %}
+        <div class="col-md-6 mb-3">
+            <div class="note-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="mb-1">{{ note.title }}</h6>
+                        {% if note.subject %}
+                            <span class="badge bg-info">{{ note.subject }}</span>
+                        {% endif %}
+                        {% if note.semester %}
+                            <span class="badge bg-secondary">Sem {{ note.semester }}</span>
+                        {% endif %}
+                        <small class="text-muted d-block mt-1">{{ note.uploaded_at|date:"M d, Y" }}</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary btn-sm-custom" onclick="viewSummary({{ note.id }})">
+                            <i class="fas fa-file-alt"></i> Summary
+                        </button>
+                        <a href="{% url 'download_note' note.id %}" class="btn btn-sm btn-success btn-sm-custom">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <button class="btn btn-sm btn-info btn-sm-custom" onclick="previewNote({{ note.id }})">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                    </div>
                 </div>
-
                 {% if note.analysis %}
-                <div class="mt-3">
-                    <small>Clarity {{ note.analysis.clarity_score|floatformat:0 }}%</small>
-                    <div class="progress">
-                        <div class="progress-bar bg-success"
-                             style="width: {{ note.analysis.clarity_score|floatformat:0 }}%">
-                        </div>
+                <div class="mt-2">
+                    <small>AI Clarity Score: {{ note.analysis.clarity_score|floatformat:0 }}%</small>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill" style="width: {{ note.analysis.clarity_score|floatformat:0 }}%"></div>
                     </div>
                 </div>
                 {% endif %}
             </div>
         </div>
         {% empty %}
-        <div class="col-md-12">
+        <div class="col-12">
             <div class="alert alert-info text-center">
-                <h5>Start Your Journey 🚀</h5>
-                <p>Upload your first note and unlock AI features</p>
-                <a href="{% url 'upload_note' %}" class="btn btn-primary">Upload Note</a>
+                <i class="fas fa-info-circle"></i> No notes yet. Click "Upload Notes" to get started with AI-powered learning!
             </div>
         </div>
         {% endfor %}
     </div>
-
 </div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-file-alt"></i> Note Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="previewContent">
+                Loading...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="downloadFromPreview">Download Note</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Modal -->
+<div class="modal fade" id="summaryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fas fa-robot"></i> AI Generated Summary</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="summaryContent">
+                <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p class="mt-2">AI is generating your summary...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Initialize Chart
+    const progressData = {{ progress_data|safe }};
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: progressData.map(d => d.date),
+            datasets: [{
+                label: 'Questions Completed',
+                data: progressData.map(d => d.completed),
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    });
+    
+    let currentPreviewNoteId = null;
+    
+    // Preview Note
+    async function previewNote(noteId) {
+        currentPreviewNoteId = noteId;
+        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+        const contentDiv = document.getElementById('previewContent');
+        contentDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+        modal.show();
+        
+        const response = await fetch(`/note/${noteId}/preview/`);
+        const data = await response.json();
+        
+        contentDiv.innerHTML = `
+            <h5>${data.title}</h5>
+            <hr>
+            <p><strong>Subject:</strong> ${data.subject || 'Not specified'}</p>
+            <p><strong>Topic:</strong> ${data.topic || 'Not specified'}</p>
+            <p><strong>Semester:</strong> ${data.semester || 'Not specified'}</p>
+            <p><strong>Uploaded:</strong> ${data.uploaded_at}</p>
+            <hr>
+            <h6>Content:</h6>
+            <div style="white-space: pre-wrap;">${data.content}</div>
+        `;
+    }
+    
+    document.getElementById('downloadFromPreview')?.addEventListener('click', function() {
+        if (currentPreviewNoteId) {
+            window.location.href = `/note/${currentPreviewNoteId}/download/`;
+        }
+    });
+    
+    // View AI Summary
+    async function viewSummary(noteId) {
+        const modal = new bootstrap.Modal(document.getElementById('summaryModal'));
+        const contentDiv = document.getElementById('summaryContent');
+        contentDiv.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">AI is generating your summary...</p></div>';
+        modal.show();
+        
+        const response = await fetch(`/note/${noteId}/summary/`);
+        const data = await response.json();
+        
+        if (data.error) {
+            contentDiv.innerHTML = `<div class="alert alert-warning">${data.error}<br><small>Please wait a moment and try again.</small></div>`;
+        } else {
+            contentDiv.innerHTML = `
+                <h6 class="text-success"><i class="fas fa-robot"></i> AI Generated Summary</h6>
+                <div class="p-3 bg-light rounded mb-3">
+                    <strong>📝 Summary:</strong>
+                    <p class="mt-2">${data.summary || 'Summary not available'}</p>
+                </div>
+                
+                <h6 class="text-primary"><i class="fas fa-star"></i> One Line Summary</h6>
+                <div class="p-2 bg-info bg-opacity-10 rounded mb-3">
+                    <p class="mb-0">${data.one_line_summary || 'Not available'}</p>
+                </div>
+                
+                <h6 class="text-warning"><i class="fas fa-list"></i> Key Points</h6>
+                <div class="p-3 bg-warning bg-opacity-10 rounded" style="white-space: pre-line;">
+                    ${data.key_points || 'Key points will appear after AI processing.'}
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <a href="/note/${noteId}/" class="btn btn-primary btn-sm">View Full Note with Questions</a>
+                </div>
+            `;
+        }
+    }
+    
+    function showToast(message, type) {
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+        toast.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+</script>
 {% endblock %}

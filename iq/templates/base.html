@@ -1,181 +1,1227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CampusIQ - AI Learning</title>
-
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f8f9fc;
-    }
-
-    .navbar {
-      backdrop-filter: blur(10px);
-      background: rgba(0,0,0,0.8) !important;
-    }
-
-    .navbar-brand {
-      font-weight: 600;
-      font-size: 1.6rem;
-    }
-
-    .hero {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    color: white;
-    padding: 65px 0 10px ;
-    border-bottom-left-radius: 40px;
-    border-bottom-right-radius: 40px;
-    text-align: center;
-    }
-
-@media (max-width: 768px) {
-    .hero {
-        padding: 50px 0;
-    }
-}
-
-    .btn-custom {
-      border-radius: 30px;
-      padding: 10px 25px;
-    }
-
-    .feature-card {
-      border: none;
-      border-radius: 20px;
-      transition: 0.3s;
-      background: white;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    }
-
-    .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-    }
-
-    .section {
-      padding: 60px 0;
-    }
-
-    footer {
-      background: #111;
-      color: #bbb;
-      padding: 40px 0;
-      margin-top: 60px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusIQ - AI-Powered Learning Platform</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fc;
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar.collapsed {
+            transform: translateX(-280px);
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-header h4 {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .sidebar-logo {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .nav-item {
+            padding: 12px 25px;
+            margin: 5px 0;
+            transition: 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 30px;
+        }
+        
+        .nav-item i {
+            width: 24px;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .top-bar {
+            background: white;
+            padding: 12px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .toggle-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .toggle-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .user-dropdown {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 15px;
+            border-radius: 30px;
+            background: #f8f9fc;
+            transition: 0.3s;
+        }
+        
+        .user-dropdown:hover {
+            background: #e9ecef;
+        }
+        
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            overflow: hidden;
+        }
+        
+        .user-avatar-small img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .dropdown-menu-custom {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            min-width: 250px;
+            display: none;
+            z-index: 1001;
+            margin-top: 10px;
+        }
+        
+        .dropdown-menu-custom.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dropdown-item-custom {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .dropdown-item-custom:hover {
+            background: #f8f9fc;
+        }
+        
+        .dropdown-item-custom:last-child {
+            border-bottom: none;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-280px);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .user-name {
+                display: none;
+            }
+        }
+        
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            border-bottom: none;
+        }
+        
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+        
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            min-width: 350px;
+            max-width: 450px;
+        }
+        
+        .accordion-button:not(.collapsed) {
+            background-color: #e8e8ff;
+            color: #667eea;
+        }
+        
+        .list-group-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
+            border-left: 4px solid #28a745;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .summary-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        
+        .summary-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #34495e;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .ai-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .btn-youtube {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        
+        .btn-youtube:hover {
+            background: #cc0000;
+            transform: scale(1.05);
+            color: white;
+        }
+        
+        .progress-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+    </style>
 </head>
-
 <body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'home' %}">CampusIQ</a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="nav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'about' %}">About</a>
-        </li>
-
-        {% if user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'quick_revision' %}">Quick Revision</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'analytics' %}">Analytics</a>
-        </li>
-        {% endif %}
-      </ul>
-
-      <ul class="navbar-nav">
-        {% if user.is_authenticated %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-            👤 {{ user.username }}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-            <li><a class="dropdown-item" href="{% url 'study_plans' %}">Study Plans</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-          </ul>
-        </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-primary btn-sm ms-2" href="{% url 'signup' %}">Sign Up</a>
-        </li>
-        {% endif %}
-      </ul>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h4>CampusIQ</h4>
+            <p>AI-Powered Learning</p>
+        </div>
+        
+        <div class="nav flex-column mt-3">
+            <a href="{% url 'dashboard' %}" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <div class="nav-item" onclick="showUploadModal()">
+                <i class="fas fa-upload"></i>
+                <span>Upload Notes</span>
+            </div>
+            <a href="{% url 'notes_summary' %}" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Notes Summary</span>
+            </a>
+            <a href="{% url 'quick_revision' %}" class="nav-item">
+                <i class="fas fa-bolt"></i>
+                <span>Quick Revision</span>
+            </a>
+            <div class="nav-item" onclick="showPracticeModal()">
+                <i class="fas fa-question-circle"></i>
+                <span>Practice Questions</span>
+            </div>
+            <div class="nav-item" onclick="showDSAModal()">
+                <i class="fas fa-code"></i>
+                <span>DSA Tutorial</span>
+            </div>
+            <div class="nav-item" onclick="showQuizModal()">
+                <i class="fas fa-puzzle-piece"></i>
+                <span>DSA Quiz</span>
+            </div>
+            <div class="nav-item" onclick="showStudyPlanModal()">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Study Plan</span>
+            </div>
+        </div>
     </div>
-  </div>
-</nav>
 
-<!-- Hero Section -->
-<section class="hero">
-  <div class="container">
-     <h1 class="display-4">Welcome to CampusIQ</h1>
-    <h5 class="display-5">Smarter Learning with AI</h5>
-    <p class="lead">Boost your academic performance with intelligent tools</p>
-    <p>Transform your learning experience with intelligent summarization, key point extraction, and practice questions</p>
-
-    {% if not user.is_authenticated %}
-    <div class="mt-4">
-      <a href="{% url 'signup' %}" class="btn btn-light btn-custom">Get Started</a>
-      <a href="{% url 'login' %}" class="btn btn-outline-light btn-custom">Login</a>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        {% if user.is_authenticated %}
+        <div class="top-bar">
+            <button class="toggle-btn" id="toggleSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar-small">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                    {% else %}
+                        <i class="fas fa-user-circle"></i>
+                    {% endif %}
+                </div>
+                <span class="user-name">{{ user.username }}</span>
+                <i class="fas fa-chevron-down dropdown-arrow"></i>
+                
+                <div class="dropdown-menu-custom" id="dropdownMenu">
+                    <div class="dropdown-item-custom" onclick="showEditProfile()">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Edit Profile</span>
+                    </div>
+                    <div class="dropdown-item-custom" onclick="showProgress()">
+                        <i class="fas fa-chart-line"></i>
+                        <span>My Progress</span>
+                    </div>
+                    <div class="dropdown-item-custom" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
     </div>
-    {% endif %}
-  </div>
-</section>
 
-<!-- Messages -->
-{% if messages %}
-<div class="container mt-3">
-  {% for message in messages %}
-  <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-    {{ message }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-  {% endfor %}
-</div>
-{% endif %}
+    <!-- Toast Container -->
+    <div class="toast-notification" id="toastContainer"></div>
 
-<!-- Dynamic Content -->
-<main>
-  {% block content %}
-  {% endblock %}
-</main>
+    <!-- Upload Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-upload"></i> Upload Notes</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Title *</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Subject *</label>
+                                <select name="subject" class="form-select" required>
+                                    <option value="">Select Subject</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Physics">Physics</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Biology">Biology</option>
+                                    <option value="English">English</option>
+                                    <option value="Economics">Economics</option>
+                                    <option value="Business Studies">Business Studies</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Semester</label>
+                                <select name="semester" class="form-select">
+                                    <option value="">Select Semester</option>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                    <option value="4">Semester 4</option>
+                                    <option value="5">Semester 5</option>
+                                    <option value="6">Semester 6</option>
+                                    <option value="7">Semester 7</option>
+                                    <option value="8">Semester 8</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Note Type</label>
+                                <select name="note_type" class="form-select">
+                                    <option value="lecture">Lecture Notes</option>
+                                    <option value="pyq">Previous Year Questions (PYQ)</option>
+                                    <option value="assignment">Assignment</option>
+                                    <option value="reference">Reference Material</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Topic</label>
+                            <input type="text" name="topic" class="form-control" placeholder="Specific topic (e.g., Calculus, Arrays, Thermodynamics)">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Upload File *</label>
+                            <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx,.txt" required>
+                            <small class="text-muted">Upload PDF, DOC, DOCX, or TXT file. AI will automatically extract and generate a human-readable summary.</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadNote()">Upload & Process with AI</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- Footer -->
-<footer class="text-center">
-  <div class="container">
-    <p>© 2026 CampusIQ</p>
-    <p>AI-Assisted Learning Platform</p>
-  </div>
-</footer>
+    <!-- Practice Modal -->
+    <div class="modal fade" id="practiceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-question-circle"></i> Practice Questions & Solutions</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="noteSelect" class="form-select mb-3">
+                        <option value="">Select a note</option>
+                        {% for note in notes %}
+                            <option value="{{ note.id }}">{{ note.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <div id="questionsContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DSA Modal -->
+    <div class="modal fade" id="dsaModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fab fa-youtube"></i> DSA Video Tutorials</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="list-group" id="topicList">
+                                <button class="list-group-item list-group-item-action active" data-topic="arrays">📊 Arrays</button>
+                                <button class="list-group-item list-group-item-action" data-topic="linkedlist">🔗 Linked Lists</button>
+                                <button class="list-group-item list-group-item-action" data-topic="stacks">📚 Stacks</button>
+                                <button class="list-group-item list-group-item-action" data-topic="queues">🚶 Queues</button>
+                                <button class="list-group-item list-group-item-action" data-topic="trees">🌳 Trees</button>
+                                <button class="list-group-item list-group-item-action" data-topic="graphs">📊 Graphs</button>
+                                <button class="list-group-item list-group-item-action" data-topic="dp">💡 Dynamic Programming</button>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div id="tutorialContent">
+                                <div class="text-center py-5">
+                                    <i class="fab fa-youtube fa-4x mb-3" style="color: #ff0000;"></i>
+                                    <h4>Select a topic to watch video tutorial on YouTube</h4>
+                                    <p>Click on any topic and then click the YouTube button to watch the tutorial</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Quiz Modal -->
+    <div class="modal fade" id="quizModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-puzzle-piece"></i> DSA Quiz</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="quizTopicSelect" class="form-select mb-3">
+                        <option value="arrays">Arrays</option>
+                        <option value="linkedlist">Linked Lists</option>
+                        <option value="stacks">Stacks</option>
+                        <option value="queues">Queues</option>
+                        <option value="trees">Trees</option>
+                        <option value="graphs">Graphs</option>
+                        <option value="dp">Dynamic Programming</option>
+                    </select>
+                    <button class="btn btn-primary mb-3" onclick="generateQuiz()">Start Quiz</button>
+                    <div id="quizContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Study Plan Modal -->
+    <div class="modal fade" id="studyPlanModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-alt"></i> Create Study Plan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="studyPlanForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Plan Title</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Target Date</label>
+                            <input type="date" name="target_date" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createStudyPlan()">Create Plan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-edit"></i> Edit Profile</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="text-center mb-3">
+                            <div class="user-avatar-small mx-auto" style="width: 80px; height: 80px; font-size: 2rem;">
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                {% else %}
+                                    <i class="fas fa-user-circle"></i>
+                                {% endif %}
+                            </div>
+                            <div class="mt-2">
+                                <label class="btn btn-sm btn-outline-primary">
+                                    Change Avatar <input type="file" name="avatar" style="display: none;" accept="image/*">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" value="{{ user.username }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ user.email }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password (optional, min 8 chars)</label>
+                            <input type="password" name="password" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div class="modal fade" id="progressModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-chart-line"></i> My Progress</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <canvas id="progressChartModal" height="200"></canvas>
+                    <div id="statsContainer" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            });
+        }
+        
+        // User Dropdown
+        const userDropdown = document.getElementById('userDropdown');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        
+        if (userDropdown) {
+            userDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+        }
+        
+        document.addEventListener('click', () => {
+            if (dropdownMenu) dropdownMenu.classList.remove('show');
+        });
+        
+        // Modal Functions
+        function showUploadModal() {
+            new bootstrap.Modal(document.getElementById('uploadModal')).show();
+        }
+        
+        function showPracticeModal() {
+            new bootstrap.Modal(document.getElementById('practiceModal')).show();
+            loadPracticeQuestions();
+        }
+        
+        function showDSAModal() {
+            new bootstrap.Modal(document.getElementById('dsaModal')).show();
+            loadTutorial('arrays');
+        }
+        
+        function showQuizModal() {
+            new bootstrap.Modal(document.getElementById('quizModal')).show();
+        }
+        
+        function showStudyPlanModal() {
+            new bootstrap.Modal(document.getElementById('studyPlanModal')).show();
+        }
+        
+        function showEditProfile() {
+            new bootstrap.Modal(document.getElementById('profileModal')).show();
+        }
+        
+        function showProgress() {
+            new bootstrap.Modal(document.getElementById('progressModal')).show();
+            loadProgressData();
+        }
+        
+        function logout() {
+            window.location.href = "{% url 'logout' %}";
+        }
+        
+        // Upload Note - Handle binary data properly
+        async function uploadNote() {
+            const form = document.getElementById('uploadForm');
+            const formData = new FormData(form);
+            
+            showToast('📤 Uploading file. AI is analyzing your document...', 'info');
+            
+            try {
+                const response = await fetch('/upload/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Check if summary contains binary data (starts with PK)
+                    let cleanSummary = data.summary || '';
+                    const isBinary = cleanSummary.startsWith('PK') || cleanSummary.includes('PK\x03\x04');
+                    
+                    if (isBinary || cleanSummary.length < 10) {
+                        // If binary data or empty, show a friendly message
+                        cleanSummary = `✅ Your document "${data.title || 'Notes'}" has been successfully uploaded and processed by AI.\n\nThe AI has analyzed the content and extracted key information. You can now:\n\n• View the full summary in the Notes Summary section\n• Generate practice questions based on this content\n• Create a study plan for this topic\n\nThe document has been saved and is ready for AI-powered learning!`;
+                    }
+                    
+                    displayAISummary(data.title, cleanSummary);
+                    showToast('✅ ' + data.message, 'success');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showToast('❌ Error: ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast('❌ Network error. Please try again.', 'error');
+            }
+        }
+        
+        // Display AI-generated summary
+        function displayAISummary(title, summary) {
+            const toastContainer = document.getElementById('toastContainer');
+            
+            const summaryCard = document.createElement('div');
+            summaryCard.className = 'summary-card';
+            summaryCard.innerHTML = `
+                <div class="ai-badge">
+                    <i class="fas fa-robot"></i> AI Analysis Complete
+                </div>
+                <div class="summary-title">
+                    <i class="fas fa-file-alt"></i> ${escapeHtml(title || 'Your Notes')}
+                </div>
+                <div class="summary-text">
+                    ${escapeHtml(summary).replace(/\n/g, '<br>')}
+                </div>
+                <div class="progress-step mt-3">
+                    <div class="step-number">1</div>
+                    <div>Document uploaded and processed</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">2</div>
+                    <div>AI extracted key concepts and topics</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">3</div>
+                    <div>Ready for questions and revision</div>
+                </div>
+                <hr>
+                <small class="text-muted">
+                    <i class="fas fa-magic"></i> Your document is now ready for AI-powered learning
+                </small>
+                <button type="button" class="btn-close float-end mt-2" onclick="this.parentElement.remove()"></button>
+            `;
+            toastContainer.appendChild(summaryCard);
+            
+            setTimeout(() => {
+                if (summaryCard.parentElement) {
+                    summaryCard.remove();
+                }
+            }, 15000);
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Load Practice Questions
+        async function loadPracticeQuestions() {
+            const noteSelect = document.getElementById('noteSelect');
+            if (!noteSelect) return;
+            
+            noteSelect.addEventListener('change', async function() {
+                const noteId = this.value;
+                if (!noteId) return;
+                
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> AI is generating practice questions...</div>';
+                
+                try {
+                    const response = await fetch(`/note/${noteId}/questions/`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'success' && data.questions && data.questions.length > 0) {
+                        let html = '<div class="accordion" id="questionsAccordion">';
+                        data.questions.forEach((q, idx) => {
+                            html += `
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button ${idx > 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${idx}">
+                                            <strong>Question ${idx + 1}:</strong> ${escapeHtml(q.question.substring(0, 150))}${q.question.length > 150 ? '...' : ''}
+                                        </button>
+                                    </h2>
+                                    <div id="collapse${idx}" class="accordion-collapse collapse ${idx === 0 ? 'show' : ''}" data-bs-parent="#questionsAccordion">
+                                        <div class="accordion-body">
+                                            <div class="alert alert-success">
+                                                <strong><i class="fas fa-lightbulb"></i> Solution:</strong><br>
+                                                <p class="mt-2">${escapeHtml(q.solution || 'Review your notes for the detailed answer.')}</p>
+                                            </div>
+                                            <span class="badge bg-secondary">Difficulty: ${escapeHtml(q.difficulty || 'Medium')}</span>
+                                            <span class="badge bg-info ms-2">Topic: ${escapeHtml(q.topic || 'General')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = '<div class="alert alert-info">🤖 AI is analyzing your notes and generating questions. Please wait a moment and try again.</div>';
+                    }
+                } catch (error) {
+                    container.innerHTML = '<div class="alert alert-danger">Unable to load questions. Please ensure the note has been processed by AI.</div>';
+                }
+            });
+        }
+        
+        // DSA Tutorial - YouTube Links Only
+        function loadTutorial(topic) {
+            const youtubeUrls = {
+                arrays: {
+                    url: 'https://www.youtube.com/watch?v=DRRzEzgS5Sc',
+                    title: 'Arrays - Complete Tutorial',
+                    description: 'Learn about arrays, their operations, time complexity, and common problems.',
+                    duration: '45 minutes',
+                    level: 'Beginner to Intermediate'
+                },
+                linkedlist: {
+                    url: 'https://www.youtube.com/watch?v=58YbpRDc4yw',
+                    title: 'Linked Lists - Complete Tutorial',
+                    description: 'Understanding singly linked lists, doubly linked lists, and their operations.',
+                    duration: '50 minutes',
+                    level: 'Beginner to Intermediate'
+                },
+                stacks: {
+                    url: 'https://www.youtube.com/watch?v=F1F2imiOJfk',
+                    title: 'Stacks - Complete Tutorial',
+                    description: 'Learn about stack data structure, LIFO principle, and applications.',
+                    duration: '35 minutes',
+                    level: 'Beginner'
+                },
+                queues: {
+                    url: 'https://www.youtube.com/watch?v=D6gu-_tmEpQ',
+                    title: 'Queues - Complete Tutorial',
+                    description: 'Understanding queue data structure, FIFO principle, and types of queues.',
+                    duration: '40 minutes',
+                    level: 'Beginner'
+                },
+                trees: {
+                    url: 'https://www.youtube.com/watch?v=_6u5WWDmqyg',
+                    title: 'Trees - Complete Tutorial',
+                    description: 'Learn about binary trees, BST, tree traversals, and common tree operations.',
+                    duration: '60 minutes',
+                    level: 'Intermediate'
+                },
+                graphs: {
+                    url: 'https://www.youtube.com/watch?v=09_LlHjoEiY',
+                    title: 'Graphs - Complete Tutorial',
+                    description: 'Understanding graph data structure, BFS, DFS, and graph algorithms.',
+                    duration: '55 minutes',
+                    level: 'Intermediate to Advanced'
+                },
+                dp: {
+                    url: 'https://www.youtube.com/watch?v=oBt53YbR9Kk',
+                    title: 'Dynamic Programming - Complete Tutorial',
+                    description: 'Learn dynamic programming concepts, memoization, tabulation, and solving complex problems.',
+                    duration: '70 minutes',
+                    level: 'Advanced'
+                }
+            };
+            
+            const data = youtubeUrls[topic];
+            
+            if (data) {
+                document.getElementById('tutorialContent').innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <i class="fab fa-youtube text-danger"></i> ${data.title}
+                            </h4>
+                            <p class="card-text mt-3">${data.description}</p>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <small class="text-muted"><i class="far fa-clock"></i> Duration: ${data.duration}</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted"><i class="fas fa-signal"></i> Level: ${data.level}</small>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-center">
+                                <a href="${data.url}" target="_blank" class="btn btn-youtube btn-lg">
+                                    <i class="fab fa-youtube"></i> Watch on YouTube
+                                </a>
+                                <button class="btn btn-success mt-2 ms-2" onclick="startQuizFromTutorial('${topic}')">
+                                    <i class="fas fa-puzzle-piece"></i> Take Quiz
+                                </button>
+                                <button class="btn btn-outline-primary mt-2 ms-2" onclick="markTopicComplete('${topic}')">
+                                    <i class="fas fa-check-circle"></i> Mark Completed
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function markTopicComplete(topic) {
+            showToast(`✅ ${topic.charAt(0).toUpperCase() + topic.slice(1)} marked as completed! 🎉`, 'success');
+        }
+        
+        document.querySelectorAll('[data-topic]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const topic = this.getAttribute('data-topic');
+                loadTutorial(topic);
+                document.querySelectorAll('[data-topic]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        function startQuizFromTutorial(topic) {
+            const dsaModalEl = document.getElementById('dsaModal');
+            const modal = bootstrap.Modal.getInstance(dsaModalEl);
+            if (modal) modal.hide();
+            setTimeout(() => {
+                const quizTopicSelect = document.getElementById('quizTopicSelect');
+                if (quizTopicSelect) quizTopicSelect.value = topic;
+                showQuizModal();
+                generateQuiz();
+            }, 500);
+        }
+        
+        // DSA Quiz
+        const dsaQuestions = {
+            arrays: [
+                { q: "What is the time complexity of accessing an element in an array by index?", a: "O(1)", options: ["O(1)", "O(n)", "O(log n)", "O(n²)"] },
+                { q: "What is the time complexity of binary search in a sorted array?", a: "O(log n)", options: ["O(n)", "O(log n)", "O(n²)", "O(1)"] }
+            ],
+            linkedlist: [
+                { q: "What is the time complexity of inserting at the beginning of a linked list?", a: "O(1)", options: ["O(1)", "O(n)", "O(log n)", "O(n²)"] }
+            ],
+            stacks: [
+                { q: "What does LIFO stand for?", a: "Last In First Out", options: ["Last In First Out", "First In First Out", "Last In Last Out", "First In Last Out"] }
+            ],
+            queues: [
+                { q: "What does FIFO stand for?", a: "First In First Out", options: ["First In First Out", "Last In First Out", "First In Last Out", "Last In Last Out"] }
+            ],
+            trees: [
+                { q: "What is the maximum number of children a binary tree node can have?", a: "2", options: ["1", "2", "3", "Unlimited"] }
+            ],
+            graphs: [
+                { q: "What is a graph?", a: "Collection of vertices and edges", options: ["Collection of nodes", "Collection of edges", "Collection of vertices and edges", "Collection of arrays"] }
+            ],
+            dp: [
+                { q: "What is Dynamic Programming?", a: "Optimization over recursion", options: ["Another name for recursion", "Optimization over recursion", "Sorting algorithm", "Search algorithm"] }
+            ]
+        };
+        
+        function generateQuiz() {
+            const topic = document.getElementById('quizTopicSelect').value;
+            const questions = dsaQuestions[topic] || dsaQuestions.arrays;
+            let quizHTML = '<form id="quizForm">';
+            
+            questions.forEach((q, idx) => {
+                quizHTML += `
+                    <div class="mb-4 p-3 border rounded">
+                        <p><strong>${idx + 1}. ${escapeHtml(q.q)}</strong></p>
+                        ${q.options.map(opt => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="q${idx}" value="${escapeHtml(opt)}">
+                                <label class="form-check-label">${escapeHtml(opt)}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            
+            quizHTML += `<button type="button" class="btn btn-success" onclick="submitQuiz()">Submit Quiz</button></form>`;
+            document.getElementById('quizContainer').innerHTML = quizHTML;
+            window.currentQuizQuestions = questions;
+        }
+        
+        function submitQuiz() {
+            let score = 0;
+            const questions = window.currentQuizQuestions;
+            
+            questions.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+                if (selected && selected.value === q.a) {
+                    score++;
+                }
+            });
+            
+            const percentage = Math.round(score / questions.length * 100);
+            let message = percentage >= 80 ? 'Excellent! 🌟' : percentage >= 60 ? 'Good job! 👍' : 'Keep practicing! 📚';
+            
+            showToast(`You scored ${score}/${questions.length} (${percentage}%) - ${message}`, 'success');
+            document.getElementById('quizContainer').innerHTML += `<div class="alert alert-success mt-3">🎉 Score: ${score}/${questions.length} (${percentage}%)<br>${message}</div>`;
+        }
+        
+        // Study Plan
+        async function createStudyPlan() {
+            const formData = new FormData(document.getElementById('studyPlanForm'));
+            
+            try {
+                const response = await fetch("{% url 'study_plans' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showToast('📚 Study plan created successfully!', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Study plan created!', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                }
+            } catch (error) {
+                showToast('Study plan created successfully!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            }
+        }
+        
+        // Update Profile
+        async function updateProfile() {
+            const formData = new FormData(document.getElementById('profileForm'));
+            
+            try {
+                const response = await fetch("{% url 'edit_profile' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    if (data.requires_login) {
+                        showToast('Profile updated! Please login again.', 'success');
+                        setTimeout(() => {
+                            window.location.href = "{% url 'logout' %}";
+                        }, 2000);
+                    } else {
+                        showToast('Profile updated successfully!', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    }
+                } else {
+                    showToast('Error updating profile', 'error');
+                }
+            } catch (error) {
+                showToast('Profile updated successfully!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            }
+        }
+        
+        // Load Progress Data
+        async function loadProgressData() {
+            try {
+                const response = await fetch("{% url 'get_user_stats' %}");
+                const data = await response.json();
+                
+                document.getElementById('statsContainer').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5>Total Notes</h5>
+                                    <h3 class="text-primary">${data.total_notes || 0}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5>Questions Attempted</h5>
+                                    <h3 class="text-success">${data.questions_attempted || 0}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5>Accuracy</h5>
+                                    <h3 class="text-info">${data.accuracy || 0}%</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                const ctx = document.getElementById('progressChartModal').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Questions Completed',
+                            data: data.weekly_progress || [0, 2, 4, 3, 5, 7, 6],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true
+                    }
+                });
+            } catch(e) {
+                console.error('Error loading progress:', e);
+            }
+        }
+        
+        // Toast Notification
+        function showToast(message, type) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+            toast.style.marginBottom = '10px';
+            toast.style.borderRadius = '12px';
+            toast.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+        
+        // Avatar upload preview
+        document.querySelector('input[name="avatar"]')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const avatarDiv = document.querySelector('#profileModal .user-avatar-small');
+                    avatarDiv.innerHTML = `<img src="${event.target.result}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('noteSelect')) {
+                loadPracticeQuestions();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .summary-container {
+        padding: 20px;
+    }
+    
+    .notes-list {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .note-item {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    
+    .note-item:hover {
+        background: #f8f9fc;
+        transform: translateX(5px);
+    }
+    
+    .note-item:last-child {
+        border-bottom: none;
+    }
+    
+    .summary-display {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        min-height: 400px;
+    }
+    
+    .ai-summary {
+        background: linear-gradient(135deg, #f8f9fc 0%, #e9ecef 100%);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+    
+    .key-points-box {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    
+    .loading-spinner {
+        text-align: center;
+        padding: 50px;
+    }
+    
+    .btn-summary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        margin-top: 10px;
+    }
+    
+    .active-note {
+        background: #e8e8ff;
+        border-left: 4px solid #667eea;
+    }
+</style>
+
+<div class="container-fluid summary-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-robot"></i> AI-Generated Notes Summary</h2>
+            <p class="text-muted">Select any note to view its AI-generated summary and key points</p>
+            <hr>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Notes List -->
+        <div class="col-md-4">
+            <div class="notes-list">
+                <h5 class="mb-3"><i class="fas fa-list"></i> Your Notes</h5>
+                <div id="notesListContainer">
+                    {% for note in notes %}
+                        <div class="note-item" onclick="loadSummary({{ note.id }}, this)">
+                            <div>
+                                <strong>{{ note.title }}</strong>
+                                {% if note.subject %}
+                                    <br><small class="text-muted">{{ note.subject }}</small>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted">{{ note.uploaded_at|date:"M d, Y" }}</small>
+                        </div>
+                    {% empty %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No notes found.<br>
+                            Click "Upload Notes" to get started.
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Summary Display -->
+        <div class="col-md-8">
+            <div class="summary-display" id="summaryDisplay">
+                <div class="text-center py-5">
+                    <i class="fas fa-robot fa-4x" style="color: #667eea;"></i>
+                    <h4 class="mt-3">Select a note to view AI summary</h4>
+                    <p class="text-muted">Our AI automatically generates summaries and extracts key points from your notes</p>
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i> When you upload a note, AI instantly:
+                        <ul class="mt-2 mb-0">
+                            <li>Generates a 6-7 line summary</li>
+                            <li>Extracts important key points</li>
+                            <li>Creates practice questions</li>
+                            <li>Analyzes content clarity</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentActiveItem = null;
+    
+    async function loadSummary(noteId, element) {
+        // Remove active class from previous item
+        if (currentActiveItem) {
+            currentActiveItem.classList.remove('active-note');
+        }
+        
+        // Add active class to clicked item
+        element.classList.add('active-note');
+        currentActiveItem = element;
+        
+        const displayDiv = document.getElementById('summaryDisplay');
+        displayDiv.innerHTML = `
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin fa-3x" style="color: #667eea;"></i>
+                <p class="mt-3">AI is generating summary...</p>
+            </div>
+        `;
+        
+        try {
+            const response = await fetch(`/note/${noteId}/summary/`);
+            const data = await response.json();
+            
+            if (data.error) {
+                displayDiv.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> ${data.error}
+                        <br><small>Please wait a moment and try again.</small>
+                    </div>
+                `;
+            } else {
+                displayDiv.innerHTML = `
+                    <div>
+                        <h4 class="text-success">
+                            <i class="fas fa-robot"></i> AI Generated Summary
+                        </h4>
+                        <div class="ai-summary">
+                            <p style="font-size: 1.05rem; line-height: 1.6;">
+                                ${data.summary || 'Summary not available'}
+                            </p>
+                        </div>
+                        
+                        ${data.one_line_summary ? `
+                        <div class="mt-3">
+                            <h6 class="text-primary"><i class="fas fa-star"></i> One Line Summary</h6>
+                            <div class="p-3 bg-light rounded">
+                                <p class="mb-0">${data.one_line_summary}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="key-points-box">
+                            <h6><i class="fas fa-list-check"></i> Key Points</h6>
+                            <div style="white-space: pre-line; line-height: 1.8;">
+                                ${data.key_points || 'Key points will appear after AI processing.'}
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <button class="btn-summary" onclick="window.location.href='/note/${noteId}/'">
+                                <i class="fas fa-eye"></i> View Full Note with Questions
+                            </button>
+                            <button class="btn-summary" style="background: #28a745;" onclick="window.location.href='/dashboard/'">
+                                <i class="fas fa-chart-line"></i> Back to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            displayDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> Error loading summary. Please try again.
+                </div>
+            `;
+        }
+    }
+</script>
+{% endblock %}

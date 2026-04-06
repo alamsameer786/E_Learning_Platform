@@ -1,93 +1,404 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - CampusIQ</title>
+    
+    {% load static %}
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow-x: hidden;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white !important;
+        }
+        
+        .nav-link {
+            color: white !important;
+            font-weight: 500;
+            transition: 0.3s;
+            margin: 0 10px;
+        }
+        
+        .nav-link:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
+        .btn-nav {
+            background: white;
+            color: #667eea !important;
+            border-radius: 25px;
+            padding: 8px 25px !important;
+            margin-left: 10px;
+        }
+        
+        .btn-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Hero Section */
+        .hero-about {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            border-radius: 20px;
+            margin: 30px 0 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-about::before {
+            content: '✨';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.1;
+            right: -50px;
+            bottom: -80px;
+            transform: rotate(-15deg);
+        }
+        
+        .hero-about::after {
+            content: '🚀';
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            left: -50px;
+            top: -50px;
+            transform: rotate(15deg);
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            height: 100%;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .developer-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            text-align: center;
+        }
+        
+        .developer-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .developer-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+        }
+        
+        .developer-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .developer-info {
+            padding: 25px;
+        }
+        
+        .developer-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .developer-role {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .developer-bio {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .social-links a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .badge-leader {
+            background: linear-gradient(135deg, #f6c23e, #f4b619);
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .team-section {
+            background: white;
+            padding: 60px 0;
+            border-radius: 20px;
+            margin: 50px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .tech-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1a1a2e;
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: 60px;
+        }
+        
+        .footer a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            transition: 0.3s;
+        }
+        
+        .social-icons a:hover {
+            background: #667eea;
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 30px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .developer-image {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
 
-{% block content %}
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-graduation-cap"></i> CampusIQ
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon" style="background-color: white; border-radius: 5px;"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about/">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#features">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn-nav" href="{% url 'signup' %}">Sign Up</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
 <div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12 text-center mb-5">
-            <h1 class="display-4">About CampusIQ</h1>
-            <p class="lead">Revolutionizing Education with AI-Powered Learning Tools</p>
+    <!-- Hero Section -->
+    <div class="hero-about text-center">
+        <h1 class="display-4 mb-3">About CampusIQ</h1>
+        <p class="lead mb-0">Revolutionizing Education with AI-Powered Learning Tools</p>
+    </div>
+    
+    <!-- Mission & Vision -->
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Our Mission</h3>
+                <p class="lead">To empower students and educators with intelligent tools that transform learning materials into structured, exam-oriented resources.</p>
+                <p>CampusIQ leverages cutting-edge AI technology to simplify complex information, making education more accessible and effective for everyone.</p>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">👁️</div>
+                <h3>Our Vision</h3>
+                <p class="lead">Creating a future where AI assists every learner in achieving academic excellence.</p>
+                <p>We believe in augmenting human intelligence with artificial intelligence to create smarter, more efficient learning experiences.</p>
+            </div>
         </div>
     </div>
     
-    <div class="row mb-5">
-        <div class="col-md-6">
-            <h3>Our Mission</h3>
-            <p class="lead">To empower students and educators with intelligent tools that transform learning materials into structured, exam-oriented resources.</p>
-            <p>CampusIQ leverages cutting-edge AI technology to simplify complex information, making education more accessible and effective for everyone.</p>
-        </div>
-        <div class="col-md-6">
-            <h3>Our Vision</h3>
-            <p class="lead">Creating a future where AI assists every learner in achieving academic excellence.</p>
-            <p>We believe in augmenting human intelligence with artificial intelligence to create smarter, more efficient learning experiences.</p>
-        </div>
-    </div>
-    
-    <div class="row mb-5">
+    <!-- Key Features -->
+    <div class="row mb-5" id="features">
         <div class="col-md-12">
             <h3 class="text-center mb-4">Key Features</h3>
         </div>
         
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 mb-3">🤖</div>
-                    <h5 class="card-title">Automatic Note Summarization</h5>
-                    <p class="card-text">AI-powered summarization that condenses lengthy notes into concise, easy-to-understand summaries. Get the core ideas without reading everything.</p>
-                </div>
+            <div class="feature-card text-center">
+                <div class="feature-icon">🤖</div>
+                <h5 class="card-title">Automatic Note Summarization</h5>
+                <p class="card-text">AI-powered summarization that condenses lengthy notes into concise, easy-to-understand summaries.</p>
             </div>
         </div>
         
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 mb-3">🎯</div>
-                    <h5 class="card-title">Key Point Extraction</h5>
-                    <p class="card-text">Intelligent extraction of important definitions, concepts, and highlights crucial for examinations and quick revision.</p>
-                </div>
+            <div class="feature-card text-center">
+                <div class="feature-icon">🎯</div>
+                <h5 class="card-title">Key Point Extraction</h5>
+                <p class="card-text">Intelligent extraction of important definitions, concepts, and highlights for quick revision.</p>
             </div>
         </div>
         
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 mb-3">❓</div>
-                    <h5 class="card-title">Important Question Generation</h5>
-                    <p class="card-text">AI-generated practice questions that reflect frequently tested concepts and critical areas of the syllabus.</p>
-                </div>
+            <div class="feature-card text-center">
+                <div class="feature-icon">❓</div>
+                <h5 class="card-title">Important Question Generation</h5>
+                <p class="card-text">AI-generated practice questions reflecting frequently tested concepts.</p>
             </div>
         </div>
         
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 mb-3">📊</div>
-                    <h5 class="card-title">Content Quality Analysis</h5>
-                    <p class="card-text">Detailed analysis of clarity, structure, and readability with actionable suggestions for improvement.</p>
-                </div>
+            <div class="feature-card text-center">
+                <div class="feature-icon">📊</div>
+                <h5 class="card-title">Content Quality Analysis</h5>
+                <p class="card-text">Detailed analysis of clarity, structure, and readability with improvement suggestions.</p>
             </div>
         </div>
         
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 mb-3">📚</div>
-                    <h5 class="card-title">Study Plan Creator</h5>
-                    <p class="card-text">Create personalized study plans to organize your learning materials and track your progress.</p>
-                </div>
+            <div class="feature-card text-center">
+                <div class="feature-icon">📚</div>
+                <h5 class="card-title">Study Plan Creator</h5>
+                <p class="card-text">Personalized study plans to organize learning materials and track progress.</p>
             </div>
         </div>
         
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="display-4 mb-3">📈</div>
-                    <h5 class="card-title">Learning Analytics</h5>
-                    <p class="card-text">Track your progress with detailed analytics and insights into your learning patterns.</p>
-                </div>
+            <div class="feature-card text-center">
+                <div class="feature-icon">📈</div>
+                <h5 class="card-title">Learning Analytics</h5>
+                <p class="card-text">Track progress with detailed analytics and insights into learning patterns.</p>
             </div>
         </div>
     </div>
     
+    <!-- How It Works -->
     <div class="row mb-5">
         <div class="col-md-12">
             <div class="alert alert-info">
@@ -105,45 +416,114 @@
         </div>
     </div>
     
+    <!-- Technology Stack -->
     <div class="row mb-5">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">For Students</h5>
-                    <ul>
-                        <li>Quickly understand core concepts</li>
-                        <li>Prepare for exams with practice questions</li>
-                        <li>Review key points efficiently</li>
-                        <li>Track your learning progress</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">For Contributors</h5>
-                    <ul>
-                        <li>Analyze content clarity and structure</li>
-                        <li>Create better-organized academic materials</li>
-                        <li>Receive AI-powered suggestions for improvement</li>
-                        <li>Share high-quality learning resources</li>
-                    </ul>
-                </div>
+        <div class="col-md-12 text-center">
+            <h3 class="mb-4">Technology Stack</h3>
+            <div class="tech-stack">
+                <span class="tech-badge"><i class="fab fa-python"></i> Django</span>
+                <span class="tech-badge"><i class="fas fa-database"></i> SQLite/PostgreSQL</span>
+                <span class="tech-badge"><i class="fab fa-js"></i> JavaScript</span>
+                <span class="tech-badge"><i class="fab fa-bootstrap"></i> Bootstrap 5</span>
+                <span class="tech-badge"><i class="fas fa-brain"></i> AI/ML</span>
+                <span class="tech-badge"><i class="fas fa-chart-line"></i> Chart.js</span>
+                <span class="tech-badge"><i class="fas fa-cloud"></i> Cloud Ready</span>
             </div>
         </div>
     </div>
     
-    <div class="row">
+    <!-- For Students & Contributors -->
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="feature-card">
+                <h5 class="card-title text-center">📖 For Students</h5>
+                <ul class="mt-3">
+                    <li>Quickly understand core concepts</li>
+                    <li>Prepare for exams with practice questions</li>
+                    <li>Review key points efficiently</li>
+                    <li>Track your learning progress</li>
+                    <li>Access DSA tutorials and quizzes</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="feature-card">
+                <h5 class="card-title text-center">👨‍🏫 For Contributors</h5>
+                <ul class="mt-3">
+                    <li>Analyze content clarity and structure</li>
+                    <li>Create better-organized academic materials</li>
+                    <li>Receive AI-powered suggestions for improvement</li>
+                    <li>Share high-quality learning resources</li>
+                    <li>Help shape the future of education</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CTA Section -->
+    <div class="row mb-5">
         <div class="col-md-12 text-center">
-            <h3>Ready to Transform Your Learning?</h3>
-            <p class="lead">Join thousands of students using CampusIQ for smarter, more efficient studying.</p>
-            {% if not user.is_authenticated %}
-                <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Get Started Free</a>
-            {% else %}
-                <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
-            {% endif %}
+            <div class="feature-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h3 class="mb-3">Ready to Transform Your Learning?</h3>
+                <p class="lead mb-4">Join thousands of students using CampusIQ for smarter, more efficient studying.</p>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'signup' %}" class="btn btn-light btn-lg" style="border-radius: 30px;">Get Started Free</a>
+                {% else %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg" style="border-radius: 30px;">Go to Dashboard</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5><i class="fas fa-graduation-cap"></i> CampusIQ</h5>
+                <p>AI-Powered Learning Platform for Academic Excellence</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-md-2 mb-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about/">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <h5>Support</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <h5>Contact</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:support@campusiq.com">support@campusiq.com</a></li>
+                    <li><i class="fas fa-phone"></i> <a href="#">+1 (555) 123-4567</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2024 CampusIQ. All rights reserved. | Empowering education through AI</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
